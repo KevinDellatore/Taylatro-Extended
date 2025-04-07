@@ -19,9 +19,9 @@ Lovely Injector: https://github.com/ethangreen-dev/lovely-injector?tab=readme-ov
 
 
 WARNING: Lovely can be, and likely WILL be flagged as a virus by your computers Anti-Virus software. . . 
-I understand any leineincy you may have and respect if you're unwilling to install because of this. Be aware that this is something of a false positive. 
-Lovely ACTS similar to a virus because it injects mod files into the game when it launches. Trojan maleware acts in a similar way to inject your PC with maleware. However, Lovely is recognized as safe on the Balatro Discord server and Subreddit. 
-If you wish to install this, but are hesitent any questions reguarding the false positive can be taken to the Modding chat channel on the official Balatro discord server.  
+I understand any hesitency you may have and respect if you're unwilling to install because of this, for that very reason a version of this mod exists that contains no extra mods but no longer contains extra jokers. 
+Be aware that this is something of a false positive. Lovely ACTS similar to a virus because it injects mod files into the game when it launches. Trojan malware acts in a similar way to inject your PC with malware. However, Lovely is recognized as safe on the Balatro Discord server and Subreddit. 
+If you wish to install this, but are hesitent, any questions regarding the false positive can be taken to the Modding-chat channel on the official Balatro discord server.  
 
 
 Install Guide: 
