@@ -18,6 +18,11 @@ SteamModded: https://github.com/Steamodded/smods
 Lovely Injector: https://github.com/ethangreen-dev/lovely-injector?tab=readme-ov-file#manual-installation 
 
 
+WARNING: Lovely can be, and likely WILL be flagged as a virus by your computers Anti-Virus software. . . 
+I understand any leineincy you may have and respect if you're unwilling to install because of this. Be aware that this is something of a false positive. 
+Lovely ACTS similar to a virus because it injects mod files into the game when it launches. Trojan maleware acts in a similar way to inject your PC with maleware. However, Lovely is recognized as safe on the Balatro Discord server and Subreddit. 
+If you wish to install this, but are hesitent any questions reguarding the false positive can be taken to the Modding chat channel on the official Balatro discord server.  
+
 
 Install Guide: 
 
