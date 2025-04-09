@@ -24,6 +24,7 @@ SMODS.Atlas{key = "cards_1", path="8BitDeck.png", px=71, py=95, prefix_config = 
 SMODS.Atlas{key = "cards_2", path="8BitDeck_opt2.png", px=71, py=95, prefix_config = {key = false} }
 SMODS.Atlas{key = "centers", path="Enhancers.png", px=71, py=95, prefix_config = {key = false}}
 SMODS.Atlas{key = "Joker", path= "Jokers.png", px=71, py=95, prefix_config = {key = false}}
+SMODS.Atlas{key = "shop_sign", path = "ShopSignAnimation.png", px=113, py= 57, prefix_config = {key= false}, atlas_table = 'ANIMATION_ATLAS', frames = 4 }
 
 --SOUNDS--
 SMODS.Sound{key='metalPipe', path = 'metalpipe.ogg'}
