@@ -93,7 +93,7 @@ SMODS.Joker{
 SMODS.Joker{
     key = 'fartJoker',
     loc_txt = {
-        name = 'Toilet Seat',
+        name = 'Reverberation',
         text = {
             "{C:green}1 in 5{} chance for",
             "{C:chips}+200{C:inavtive} Chips"
@@ -124,7 +124,7 @@ SMODS.Joker{
  
 
         if context.joker_main then 
-            if pseudorandom('fartJoker') < G.GAME.probabilities.normal/card.ability.extra.X_mult then
+            if pseudorandom('fartJoker') < G.GAME.probabilities.normal/card.ability.extra.odds then
                 return{
                     chip_mod = card.ability.extra.chips,
                     message = '+' .. card.ability.extra.chips,
@@ -182,6 +182,13 @@ SMODS.Joker{
                         card:juice_up(0.3,0.4)
                         card.states.drag.is = true
                         card.children.center.pinch.x = true
+
+                        for _, played_card in ipairs(context.full_hand or {}) do
+                            if played_card and played_card.set_seal then
+                                played_card:set_seal('Red')
+                            end
+                        end
+
                         G.E_MANAGER:add_event(Event({
                             trigger = 'after',
                             delay = 0.3,
@@ -244,7 +251,7 @@ SMODS.Joker{
         text = {
             "Chunks of Watermelon now litter the room",
             "Cannot be sold or destroyed",
-            "Scored Face cards gain Red Seal"
+            "PepePoint"
         }
     },
     atlas = 'Jokers',
@@ -258,47 +265,13 @@ SMODS.Joker{
     pos = {x = 3, y = 0},
     config = { 
         extra = {
-            odds = 10,
-            chips = 0,
-            mod = 10
+            taystinks = 1
         }
     },
     
     loc_vars = function(self, info_queue, card)
-        return{vars = {G.GAME.probabilities.normal, card.ability.extra.odds, card.ability.extra.chips}
+        return{vars = {card.ability.extra.taystinks}
         } 
-    end,
-    
-    calculate = function(self,card,context)
- 
-        if context.joker_main then 
-            
-            if 0 < G.GAME.probabilities.normal/card.ability.extra.odds then
-                card:juice_up(0.3,0.3)
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.3,
-                    blockable = false,
-                    func = function()
-                        G.jokers:remove_card(card)
-                        card:remove()
-                        card = nil
-                        return true;
-                    end
-                }))
-                return {sound = 'TYN_BOOM', remove = true}
-            end
-
-            card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.mod
-
-            return{
-                message = 'Upgraded!',
-                colour = G.C.CHIPS,
-                delay = 0.45,
-                card = card,
-                chip_mod = card.ability.extra.chips
-            }
-        end
     end,
 
     in_pool = function(self,wawa,wawa2)
@@ -311,10 +284,11 @@ SMODS.Joker{
 SMODS.Joker{
     key = 'yoshiJoker',
     loc_txt = {
-        name = 'MLEM',
+        name = 'Angel Numbers',
         text = {
             "When a {C:attention} Three of a Kind {} is played containing {C:attention}#1#s{}",
-            "Gives {C:attention}$#1#{}"
+            "Gives {C:attention}$#1#{}",
+            "Adds {C:attention} Lucky {} Enhancement to scored {C:attention}#1#s{}"
         }
     },
     atlas = 'Jokers',
@@ -340,7 +314,8 @@ SMODS.Joker{
     end,
     
     calculate = function(self,card,context)
-        if context.cardarea == G.jokers and context.before and context.full_hand then
+        if  context.cardarea == G.jokers and context.after and context.full_hand then
+            
             local has_7 = false
             for i = 1, #context.full_hand do 
                 if context.full_hand[i]:get_id() == 7 then
@@ -349,11 +324,18 @@ SMODS.Joker{
             end
 
             if context.scoring_name == 'Three of a Kind' and has_7 then
+                
+                for _, scored_card in ipairs(context.scoring_hand) do    
+                    scored_card:set_ability(G.P_CENTERS.m_lucky, nil, true)
+                end
+
                 return{
                     delay = 0.45,
                     sound = 'TYN_mlem',
                     message = "$" .. number_format(card.ability.extra.money), 
+                    dollars = card.ability.extra.money,
                     colour = G.C.MONEY
+                    
                 }
             end
         end
