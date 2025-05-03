@@ -31,6 +31,7 @@ SMODS.Sound{key='metalPipe', path = 'metalpipe.ogg'}
 SMODS.Sound{key='fart', path = 'fart.ogg'}
 SMODS.Sound{key='BOOM', path = 'BOOM.ogg'}
 SMODS.Sound{key= 'mlem', path = 'MLEM.ogg'}
+SMODS.Sound{key='levelUp', path = 'VegasLevelUp.ogg'}
 
 
 --JOKERS--
@@ -49,7 +50,7 @@ SMODS.Joker{
     loc_txt = {
         name = 'PIPE',
         text = {
-            "{C:green}1 in 5{} chance for",
+            "{C:green, E:1}1 in 5{} chance for",
             "{X:red,C:white} X10 {} Mult"
         }
     },
@@ -95,7 +96,7 @@ SMODS.Joker{
     loc_txt = {
         name = 'Reverberation',
         text = {
-            "{C:green}1 in 5{} chance for",
+            "{C:green, E:1}1 in 5{} chance for",
             "{C:chips}+200{C:inavtive} Chips"
         }
     },
@@ -143,13 +144,13 @@ SMODS.Joker{
         name = 'Ticking Time Bomb',
         text = {
             "Gains {C:chips}+10{} chips for every hand played",
-            "{C:green} #4# in #2# {} chance for Joker to explode",
+            "{C:green, E:1} #4# in #2# {} chance for Joker to {C:red, E:2} EXPLODE {}",
             "Currently {C:chips}+#3#{C:inavtive} Chips"
         }
     },
     atlas = 'Jokers',
     rarity = 2,
-    cost = 5,
+    cost = 4,
     unlocked = true,
     discovered = true,
     blueprint_compat = false,
@@ -207,26 +208,10 @@ SMODS.Joker{
                         }))
                         return true 
                     end
-                    --IGNORE THIS OLD CODE :P --
-                    
-                    --trigger = 'after',
-                    --delay = 0.3,
-                    --blockable = false,
-                    --func = function()
-                        --G.jokers:remove_card(card)
-                        --card:remove()
-                        --card = nil
-                    
-                        --local card = SMODS.add_card({key = 'j_TYN_explodedJoker', stickers = {"eternal"}})
-                        --local card = create_card('Joker', G.jokers, nil, nil, nil, nil, 'j_TYN_explodedJoker')
-                        --SMODS.Stickers['eternal']:apply(card, true)
-                        --card:add_to_deck()
-                        --G.jokers:emplace(card)
-                        --return true;
-                    --end
+
                 }))
                 return true
-                --return {remove = true}
+                
             end
 
             card.ability.extra.numerator = card.ability.extra.numerator + card.ability.extra.numerator_mod
@@ -256,7 +241,7 @@ SMODS.Joker{
     },
     atlas = 'Jokers',
     rarity = 3,
-    cost = 10,
+    cost = 100,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -293,7 +278,7 @@ SMODS.Joker{
     },
     atlas = 'Jokers',
     rarity = 1,
-    cost = 3,
+    cost = 4,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -342,7 +327,106 @@ SMODS.Joker{
     end
 }
 
+SMODS.Joker{
+    key = 'PipJoker',
+    loc_txt = {
+        name = 'Crawl Out From the Fallout',
+        text = {
+            --"{C:attention} LEVELED UP {} ",
+            "Gives {C:planet} Planet Card {} of most played {C:attention} Poker Hand {}",
+            "for every {C:attention} #1# {} hands played",
+            "Hands needed for activation increases every {C:planet} Level Up {}",
+            "{C:inactive} #3# Hands Left until next activation {}"
+        }
+    },
 
+    atlas = 'Jokers',
+    rarity = 2,
+    cost = 5,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 5, y = 0},
+    config = { 
+        extra = {
+            handsNeed = 2,
+            handsCurrent = 0,
+            handsLeft = 1,
+            active = false
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.handsNeed, card.ability.extra.handsCurrent, card.ability.extra.handsLeft}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.before and context.cardarea == G.jokers and not context.blueprint and not context.retrigger then
+            
+            card.ability.extra.handsCurrent = card.ability.extra.handsCurrent + 1
+            card.ability.extra.handsLeft = card.ability.extra.handsLeft - 1
+
+            if context.before and card.ability.extra.handsCurrent >= card.ability.extra.handsNeed then
+                local temp = 0
+                local hand = nil
+                local planetKey = nil 
+
+                for k, v in pairs(G.GAME.hands) do
+                    if v.played > temp and v.visible then
+                        temp = v.played
+                        hand = k  
+                    end
+                end
+
+                if hand then
+                    for k, v in pairs(G.P_CENTER_POOLS.Planet) do
+                        if v.config.hand_type == hand then
+                            planetKey = v.key
+                        end
+                    end 
+                end
+                
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    blockable = false,
+                    delay = 0.3,
+                    func = function()
+                        local planet = create_card("Planet", G.consumeables, nil, nil, nil, nil, planetKey)
+                        G.consumeables:emplace(planet)
+                        return true;
+                    end
+                }))
+                
+                card.ability.extra.handsCurrent = 0
+                card.ability.extra.handsNeed = card.ability.extra.handsNeed + 1
+                card.ability.extra.handsLeft = card.ability.extra.handsNeed - 1
+                card.ability.extra.active = false
+
+
+                return{
+                    
+                    sound = 'TYN_levelUp',
+                    message = 'Leveled Up!',
+                    colour = G.C.PLANET
+
+                }
+
+            end
+
+            if card.ability.extra.handsLeft == 0 then
+                card.ability.extra.active = true 
+                local eval = function(card) 
+                    return(card.ability.extra.active == true)
+                end
+                juice_card_until(card, eval, true)
+            end
+
+        end
+    end
+}
 -----------------------------------------------------------
 -----------------------MOD CODE END------------------------
 ----------------------Taylien-STINKS-----------------------
