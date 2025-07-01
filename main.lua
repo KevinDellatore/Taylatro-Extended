@@ -32,9 +32,10 @@ SMODS.Sound{key='fart', path = 'fart.ogg'}
 SMODS.Sound{key='BOOM', path = 'BOOM.ogg'}
 SMODS.Sound{key= 'mlem', path = 'MLEM.ogg'}
 SMODS.Sound{key='levelUp', path = 'VegasLevelUp.ogg'}
+SMODS.Sound{key='nuka', path = 'nuka.ogg'}
+SMODS.Sound{key='burp', path = 'burp.ogg'}
 
-
---JOKERS--
+--JOKERS ATLAS--
 SMODS.Atlas{
     key = 'Jokers',
     path = 'Joker.png',
@@ -42,9 +43,18 @@ SMODS.Atlas{
     py = 95
 }
 
+--SMODS OPTIONS--
+SMODS.current_mod.optional_features = function()
+    return {
+        retrigger_joker = true,
+    }
+end
 
+SMODS.current_mod.optional_features = { retrigger_joker = true }
 
+--JOKERS DOWN HERE BRUV--
 
+--Pipe Joker 1 in 5 chance for x10 mult
 SMODS.Joker{
     key = 'pipeJoker',
     loc_txt = {
@@ -77,9 +87,8 @@ SMODS.Joker{
     
     calculate = function(self,card,context)
  
-
         if context.joker_main then 
-            if pseudorandom('pipeJoker') < G.GAME.probabilities.normal/card.ability.extra.X_mult then
+            if pseudorandom('pipeJoker') < G.GAME.probabilities.normal/card.ability.extra.odds then
                 return{
                     Xmult_mod = card.ability.extra.X_mult,
                     message = 'X' .. card.ability.extra.X_mult,
@@ -91,6 +100,7 @@ SMODS.Joker{
     end
 }
 
+--fart joker 1 in 5 chance +200 chips
 SMODS.Joker{
     key = 'fartJoker',
     loc_txt = {
@@ -130,7 +140,7 @@ SMODS.Joker{
                     chip_mod = card.ability.extra.chips,
                     message = '+' .. card.ability.extra.chips,
                     sound = 'TYN_fart',
-                    colour = G.C.MULT,
+                    colour = G.C.CHIPS,
                 }
             end
         end
@@ -152,7 +162,7 @@ SMODS.Joker{
     rarity = 2,
     cost = 4,
     unlocked = true,
-    discovered = true,
+    discovered = false,
     blueprint_compat = false,
     perishable_compat = true,
     eternal_compat = true,
@@ -228,7 +238,7 @@ SMODS.Joker{
     end
 }
 
-
+--EXPLODED JOKER :3
 SMODS.Joker{
     key = 'explodedJoker',
     loc_txt = {
@@ -327,6 +337,7 @@ SMODS.Joker{
     end
 }
 
+-- Fallout Joker, gives a planet card of your most played hand, but only every x hands played. Hands needed increases every "level up"
 SMODS.Joker{
     key = 'PipJoker',
     loc_txt = {
@@ -427,6 +438,611 @@ SMODS.Joker{
         end
     end
 }
+
+--NUKA COLA BASE COMPLETE (?) -- TEST TEST TEST 
+SMODS.Joker{
+    
+    key = 'nukaJoker',
+    loc_txt = {
+        name = 'Nuka Cola',
+        text = {
+            "{X:red,C:white} X2 {} Mult for every Nuka Cola Joker in possession", 
+            "{C:green, E:1} 1 in #1# {} chance to add {C:red} caps {} (red seals) to random scored card",
+            "{C:inactive} Currently #2# Nuka Colas {} "
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 1,
+    cost = 2,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 1, y = 1},
+    config = { 
+        extra = {
+            odds = 4,
+            xmult = 2,
+            nuka = 1
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.odds, card.ability.extra.nuka * GetNukaCount(), card.ability.extra.xmult}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+
+        if context.cardarea == G.jokers and context.joker_main then
+
+            local nukaCount = GetNukaCount()
+            card.ability.extra.nuka = nukaCount
+            return{
+                Xmult_mod = nukaCount * card.ability.extra.xmult,
+                message =  "X" .. card.ability.extra.xmult * nukaCount,
+                sound = "TYN_nuka",
+                colour = G.C.MULT 
+            }
+
+        end
+
+        if context.after and context.cardarea == G.jokers and not context.blueprint then
+            
+            if pseudorandom('cola') < G.GAME.probabilities.normal/card.ability.extra.odds then
+                
+                local target = pseudorandom_element(context.scoring_hand)
+                
+
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        target:juice_up()
+                        target:set_seal("Red")
+                        return true
+                    end
+                }))
+
+
+                return{
+                    message = "Upgraded",  
+                }
+            end
+
+            return true
+
+        end
+    end
+}
+
+-- NUKA QUANTUM COMPLETE
+SMODS.Joker{
+    key = 'quantumJoker',
+    loc_txt = {
+        name = 'Nuka Quantum',
+        text = {
+            "{X:red,C:white} +5 {} Mult ",
+            "{C:green, E:1} 1 in #1# {} chance to add Purple seal to random scored card",
+            "Gain {X:red,C:white} x0.5 {} Mult for every Purple seal added",
+            "{C:inactive} Currently x#3# Mult {}"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 3,
+    cost = 8,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 0, y = 1},
+    config = { 
+        extra = {
+            odds = 5,
+            mult = 5,
+            x_mult = 1,
+            x_multMod = 0.5
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.odds, G.GAME.probabilities.normal, card.ability.extra.x_mult, card.ability.extra.x_multMod}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.joker_main then
+            return{
+                mult_mod = card.ability.extra.mult,
+                message = '+' .. card.ability.extra.mult .. "  X" .. card.ability.extra.x_mult,
+                Xmult_mod = card.ability.extra.x_mult,
+                sound = 'TYN_nuka',
+                colour = G.C.MULT,
+            }
+        end
+
+        if context.after and context.cardarea == G.jokers and not context.blueprint then
+            
+            if pseudorandom('quantum') < G.GAME.probabilities.normal/card.ability.extra.odds then
+                
+                local target = pseudorandom_element(context.scoring_hand)
+                
+
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        target:juice_up()
+                        target:set_seal("Purple")
+                        return true
+                    end
+                }))
+
+                card.ability.extra.x_mult = card.ability.extra.x_mult + card.ability.extra.x_multMod
+
+                return{
+                    message = "Upgraded",  
+                    colour = G.C.MULT,
+                }
+            end
+
+            return{
+                sound = 'TYN_burp',
+            }
+
+        end
+    end
+}
+
+--NUKA TWIST COMPLETE!!!!!!
+SMODS.Joker{
+    
+    key = 'twistJoker',
+    loc_txt = {
+        name = 'Nuka Twist',
+        text = {
+            "{C:chips} +777 {} Chips",
+            "{C:green, E:1} 1 in #2# {} chance to retrigger all Jokers"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 3,
+    cost = 8,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 3, y = 1},
+    config = { 
+        extra = {
+            chips = 777,
+            odds = 7,
+            reps = 1
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.chips, card.ability.extra.odds, G.GAME.probabilities.normal}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.retrigger_joker_check and context.other_card and not context.retrigger_joker and context.other_card ~= self and context.other_card.config and context.other_card.config.key ~= self.key then
+            if pseudorandom('twist') < G.GAME.probabilities.normal/card.ability.extra.odds then
+                return{
+                    message = 'AGAIN!',
+                    repetitions = 1,
+        
+                }
+            end
+        end
+
+        if context.joker_main then 
+            return{
+                chip_mod = card.ability.extra.chips,
+                message = '+' .. card.ability.extra.chips,
+                sound = 'TYN_nuka',
+                colour = G.C.CHIPS,
+            }
+        end
+    end
+}
+
+--NUKA VICTORY COMPLETE 
+SMODS.Joker{
+    
+    key = 'victoryJoker',
+    loc_txt = {
+        name = 'Nuka Victory',
+        text = {
+            "All non face cards become {C:gold} GOLD {} cards when scored",
+            "{C:green, E:1} 1 in #1# {} chance to gain {X:red,C:white} X0.1 {} Mult", 
+            "for every scored card turned {C:gold} GOLD {} that hand",
+            "{C:inactive} Currently x#2# {}"
+
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 3,
+    cost = 8,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 5, y = 1},
+    config = { 
+        extra = {
+            odds = 5,
+            xmult = 1,
+            multMod = 0.1
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.odds, card.ability.extra.xmult, G.GAME.probabilities.normal}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.before and not context.blueprint then
+            local goldCount = 0
+            for k, v in ipairs(context.scoring_hand) do
+                if not v:is_face() then 
+                    v:set_ability(G.P_CENTERS.m_gold, nil, true)
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            v:juice_up()
+                            return true
+                        end
+                    })) 
+                    goldCount = goldCount + 0.1
+                end
+            end
+            
+            if pseudorandom('victory') < G.GAME.probabilities.normal/card.ability.extra.odds then 
+                card.ability.extra.xmult = card.ability.extra.xmult + goldCount
+                return{
+                    message = 'UPGRADED!',
+                    sound = 'TYN_nuka'
+                }
+            end
+
+            return{
+                message = 'ENHANCED!',
+                sound = 'TYN_nuka'
+            }
+
+        end
+
+
+        if context.cardarea == G.jokers and context.joker_main and not context.blueprint then
+            
+            return{
+                message = "X" .. card.ability.extra.xmult,
+                Xmult_mod = card.ability.extra.xmult,
+                sound = 'TYN_nuka',
+                colour = G.C.MULT 
+            }
+            
+        end
+    end
+}
+
+--NUKA CHERRY COMPLETE
+SMODS.Joker{
+    
+    key = 'cherryJoker',
+    loc_txt = {
+        name = 'Nuka Cherry',
+        text = {
+            "{X:red,C:white} x2 {} Mult for every",
+            "{C:red} Diamonds{} or {C:red} Hearts{} card scored",
+            "{C:green, E:1} 1 in #2# {} chance to retrigger",
+            "{C:red} Diamonds{} or {C:red} Hearts{} cards"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 1,
+    cost = 3,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 4, y = 1},
+    config = { 
+        extra = {
+            xmult = 2,
+            odds = 3,
+            repetitions = 0
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.xmult, card.ability.extra.odds, G.GAME.probabilities.normal, card.ability.extra.repetitions}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+
+
+        if context.before then
+            if (pseudorandom("cherry") < G.GAME.probabilities.normal/card.ability.extra.odds) then
+                card.ability.extra.repetitions = card.ability.extra.repetitions + 1
+                
+                return{
+                    message = "AGAIN!"
+                }
+            end
+        end
+
+        if context.repetition then 
+            if context.cardarea == G.play then
+                if context.other_card:is_suit("Hearts") or context.other_card:is_suit("Diamonds") then
+                    return{
+                        --message = "AGAIN!",
+                        repetitions = card.ability.extra.repetitions,
+                        card = card
+                    }
+                end
+            end
+        end
+
+        if context.individual then 
+            if context.cardarea == G.play then
+                if context.other_card:is_suit("Hearts") or context.other_card:is_suit("Diamonds") then
+                    return{
+                        Xmult_mod = card.ability.extra.xmult,
+                        message = 'X' .. card.ability.extra.xmult,
+                        sound = 'TYN_nuka',
+                        colour = G.C.MULT,
+                    }
+                end
+            end
+        end
+
+        if context.after then
+            card.ability.extra.repetitions = card.ability.extra.repetitions - card.ability.extra.repetitions
+        end
+        --if context.individual and context.cardarea == G.play and (context.other_card:is_suit("Hearts") or context.other_card:is_suit("Diamonds")) then
+        
+            --return{
+            --    Xmult_mod = card.ability.extra.xmult,
+            --    message = 'X' .. card.ability.extra.xmult,
+            --    sound = 'TYN_nuka',
+            --    colour = G.C.MULT,
+            --}
+
+        --end
+
+
+    end
+}
+
+--NUKA GRAPE COMPLETE
+SMODS.Joker{
+    
+    key = 'grapeJoker',
+    loc_txt = {
+        name = 'Nuka Grape',
+        text = {
+            "{X:red,C:white} x2 {} Mult for every",
+            "{C:blue} Spades{} or {C:blue} Clubs{} card scored",
+            "{C:green, E:1} 1 in #2# {} chance to retrigger",
+            "{C:blue} Spades{} or {C:blue} Clubs{} cards"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 1,
+    cost = 3,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 6, y = 1},
+    config = { 
+        extra = {
+            xmult = 2,
+            odds = 3
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.xmult, card.ability.extra.odds, G.GAME.probabilities.normal}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+
+
+        if context.before then
+            
+            if (pseudorandom("grape") < G.GAME.probabilities.normal/card.ability.extra.odds) then
+                card.ability.extra.repetitions = card.ability.extra.repetitions + 1
+                
+                
+                return{
+                    message = "AGAIN!"
+                }
+            end
+        end
+
+        if context.repetition then 
+            if context.cardarea == G.play then
+                if context.other_card:is_suit("Clubs") or context.other_card:is_suit("Spades") then
+                    return{
+                        message = "AGAIN!",
+                        repetitions = card.ability.extra.repetitions,
+                        card = card
+                    }
+                end
+            end
+        end
+
+        if context.individual then 
+            if context.cardarea == G.play then
+                if context.other_card:is_suit("Clubs") or context.other_card:is_suit("Spades") then
+                    return{
+                        Xmult_mod = card.ability.extra.xmult,
+                        message = 'X' .. card.ability.extra.xmult,
+                        sound = 'TYN_nuka',
+                        colour = G.C.MULT,
+                    }
+                end
+            end
+        end
+
+        if context.after then
+            card.ability.extra.repetitions = card.ability.extra.repetitions - card.ability.extra.repetitions
+            --local reps = card.ability.extra.repetitions
+            --print(reps)
+        end
+
+    end
+}
+
+--NUKA QUARTZ COMPLETE
+SMODS.Joker{
+    
+    key = 'quartzJoker',
+    loc_txt = {
+        name = 'Nuka Quartz',
+        text = {
+            "{C:green, E:1} 1 in #1# {} chance to enhance a random",
+            "scored card into a {C:attention} Glass Card {}"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { nuka = true},
+    rarity = 3,
+    cost = 8,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 2, y = 1},
+    config = { 
+        extra = {
+            odds = 5
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.odds, G.GAME.probabilities.normal}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.after and context.cardarea == G.jokers and not context.blueprint then
+            
+            if pseudorandom('quartz') < G.GAME.probabilities.normal/card.ability.extra.odds then 
+                
+                local target = pseudorandom_element(context.scoring_hand)
+
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        target:juice_up()
+                        target:set_ability(G.P_CENTERS.m_glass)
+                        return true
+                    end
+                }))
+
+                return{
+                    message = "ENHANCE!",
+                    sound = 'TYN_nuka'
+                }
+        
+            end 
+
+        end
+    end
+}
+
+--coin joker
+SMODS.Joker{
+    key = 'coinJoker',
+    loc_txt = {
+        name = 'Flippa Flippa',
+        text = {
+            "{C:green, E:1}50%{} chance to",
+            "Either give {X:red,C:white} X1000 {} Mult",
+            "or instantly end the run"
+        }
+    },
+    atlas = 'Jokers',
+    rarity = 3,
+    cost = 8,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 1, y = 0},
+    config = { 
+        extra = {
+            X_mult = 1000,
+            odds = 2
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {G.GAME.probabilities.normal, card.ability.extra.odds}
+        } 
+    end,
+    
+    calculate = function(self,card,context)
+        local chance = pseudorandom('pipeJoker')
+        
+        if context.joker_main then 
+            
+            if chance < G.GAME.probabilities.normal/card.ability.extra.odds then
+                return{
+                    Xmult_mod = card.ability.extra.X_mult,
+                    message = 'X' .. card.ability.extra.X_mult,
+                    sound = 'TYN_metalPipe',
+                    colour = G.C.MULT,
+                }
+            end
+
+            if chance > G.GAME.probabilities.normal/card.ability.extra.odds then
+                G.STATE = G.STATES.GAME_OVER; G.STATE_COMPLETE = false
+            end
+        end
+    end
+}
+
+
+
+--nuka check--
+function GetNukaCount()
+    local nuka_count = 0
+    if G.jokers and G.jokers.cards then
+        for i = 1, #G.jokers.cards do 
+            local card = G.jokers.cards[i]
+            local center = (type(card) == "string" and G.P.CENTERS[card]) or (card.config and card.config.center)
+            if center and center.pools and center.pools.nuka then
+                nuka_count = nuka_count + 1
+            end
+        end
+    end
+    return nuka_count
+end
+
 -----------------------------------------------------------
 -----------------------MOD CODE END------------------------
 ----------------------Taylien-STINKS-----------------------
