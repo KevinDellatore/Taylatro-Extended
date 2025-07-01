@@ -974,7 +974,8 @@ SMODS.Joker{
 }
 
 --coin joker
-SMODS.Joker{
+
+--[[SMODS.Joker{
     key = 'coinJoker',
     loc_txt = {
         name = 'Flippa Flippa',
@@ -1025,6 +1026,7 @@ SMODS.Joker{
         end
     end
 }
+]]
 
 
 
