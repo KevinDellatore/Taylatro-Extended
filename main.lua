@@ -34,6 +34,7 @@ SMODS.Sound{key= 'mlem', path = 'MLEM.ogg'}
 SMODS.Sound{key='levelUp', path = 'VegasLevelUp.ogg'}
 SMODS.Sound{key='nuka', path = 'nuka.ogg'}
 SMODS.Sound{key='burp', path = 'burp.ogg'}
+SMODS.Sound{key='nukaburp', path = 'nukaburp.ogg'}
 
 --JOKERS ATLAS--
 SMODS.Atlas{
@@ -560,7 +561,7 @@ SMODS.Joker{
                 mult_mod = card.ability.extra.mult,
                 message = '+' .. card.ability.extra.mult .. "  X" .. card.ability.extra.x_mult,
                 Xmult_mod = card.ability.extra.x_mult,
-                sound = 'TYN_nuka',
+                sound = 'TYN_nukaburp',
                 colour = G.C.MULT,
             }
         end
@@ -589,7 +590,7 @@ SMODS.Joker{
             end
 
             return{
-                sound = 'TYN_burp',
+                sound = 'TYN_nukaburp',
             }
 
         end
@@ -636,6 +637,7 @@ SMODS.Joker{
             if pseudorandom('twist') < G.GAME.probabilities.normal/card.ability.extra.odds then
                 return{
                     message = 'AGAIN!',
+                    sound = 'TYN_nukaburp',
                     repetitions = 1,
         
                 }
@@ -646,7 +648,7 @@ SMODS.Joker{
             return{
                 chip_mod = card.ability.extra.chips,
                 message = '+' .. card.ability.extra.chips,
-                sound = 'TYN_nuka',
+                sound = 'TYN_nukaburp',
                 colour = G.C.CHIPS,
             }
         end
@@ -711,13 +713,13 @@ SMODS.Joker{
                 card.ability.extra.xmult = card.ability.extra.xmult + goldCount
                 return{
                     message = 'UPGRADED!',
-                    sound = 'TYN_nuka'
+                    sound = 'TYN_nukaburp'
                 }
             end
 
             return{
                 message = 'ENHANCED!',
-                sound = 'TYN_nuka'
+                sound = 'TYN_nukaburp'
             }
 
         end
@@ -728,7 +730,7 @@ SMODS.Joker{
             return{
                 message = "X" .. card.ability.extra.xmult,
                 Xmult_mod = card.ability.extra.xmult,
-                sound = 'TYN_nuka',
+                sound = 'TYN_nukaburp',
                 colour = G.C.MULT 
             }
             
@@ -804,7 +806,7 @@ SMODS.Joker{
                     return{
                         Xmult_mod = card.ability.extra.xmult,
                         message = 'X' .. card.ability.extra.xmult,
-                        sound = 'TYN_nuka',
+                        sound = 'TYN_nukaburp',
                         colour = G.C.MULT,
                     }
                 end
@@ -814,18 +816,6 @@ SMODS.Joker{
         if context.after then
             card.ability.extra.repetitions = card.ability.extra.repetitions - card.ability.extra.repetitions
         end
-        --if context.individual and context.cardarea == G.play and (context.other_card:is_suit("Hearts") or context.other_card:is_suit("Diamonds")) then
-        
-            --return{
-            --    Xmult_mod = card.ability.extra.xmult,
-            --    message = 'X' .. card.ability.extra.xmult,
-            --    sound = 'TYN_nuka',
-            --    colour = G.C.MULT,
-            --}
-
-        --end
-
-
     end
 }
 
@@ -964,11 +954,9 @@ SMODS.Joker{
 
                 return{
                     message = "ENHANCE!",
-                    sound = 'TYN_nuka'
+                    sound = 'TYN_nukaburp'
                 }
-        
             end 
-
         end
     end
 }
