@@ -449,14 +449,14 @@ SMODS.Joker{
         text = {
             "{X:red,C:white} X2 {} Mult for every Nuka Cola Joker in possession", 
             "{C:green, E:1} 1 in #1# {} chance to add {C:red} caps {} (red seals) to random scored card",
-            "{C:inactive} Currently #2# Nuka Colas {} "
+            "{C:inactive} Currently #4# Nuka Colas {} "
         }
     },
 
     atlas = 'Jokers',
-    pools = { nuka = true},
+    --pools = { nuka = true},
     rarity = 1,
-    cost = 2,
+    cost = 4,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -472,7 +472,7 @@ SMODS.Joker{
     },
     
     loc_vars = function(self, info_queue, card)
-        return{vars = {card.ability.extra.odds, card.ability.extra.nuka * GetNukaCount(), card.ability.extra.xmult}
+        return{vars = {card.ability.extra.odds, card.ability.extra.nuka * GetNukaCount(), card.ability.extra.xmult, card.ability.extra.nuka}
         } 
     end,
     
@@ -505,7 +505,6 @@ SMODS.Joker{
                         return true
                     end
                 }))
-
 
                 return{
                     message = "Upgraded",  
@@ -713,14 +712,16 @@ SMODS.Joker{
                 card.ability.extra.xmult = card.ability.extra.xmult + goldCount
                 return{
                     message = 'UPGRADED!',
-                    sound = 'TYN_nukaburp'
+                    sound = 'TYN_nuka'
                 }
             end
 
-            return{
-                message = 'ENHANCED!',
-                sound = 'TYN_nukaburp'
-            }
+            if goldCount > 0 then
+                return{
+                    message = 'ENHANCED!',
+                    sound = 'TYN_nuka'
+                }
+            end
 
         end
 
@@ -754,8 +755,8 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 1,
-    cost = 3,
+    rarity = 2,
+    cost = 6,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -835,8 +836,8 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 1,
-    cost = 3,
+    rarity = 2,
+    cost = 6,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -918,8 +919,8 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 3,
-    cost = 8,
+    rarity = 2,
+    cost = 5,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
