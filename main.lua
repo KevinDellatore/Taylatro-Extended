@@ -53,6 +53,12 @@ end
 
 SMODS.current_mod.optional_features = { retrigger_joker = true }
 
+
+v_dictionary = {
+    pipActive = "ACTIVE!",
+    pipInactive = "#3# Hands Remaining"
+}
+
 --JOKERS DOWN HERE BRUV--
 
 --Pipe Joker 1 in 5 chance for x10 mult
@@ -348,7 +354,7 @@ SMODS.Joker{
             "Gives {C:planet} Planet Card {} of most played {C:attention} Poker Hand {}",
             "for every {C:attention} #1# {} hands played",
             "Hands needed for activation increases every {C:planet} Level Up {}",
-            "{C:inactive} #3# Hands Left until next activation {}"
+            "{C:inactive} #4# {}"
         }
     },
 
@@ -371,8 +377,7 @@ SMODS.Joker{
     },
     
     loc_vars = function(self, info_queue, card)
-        return{vars = {card.ability.extra.handsNeed, card.ability.extra.handsCurrent, card.ability.extra.handsLeft}
-        } 
+        return{vars = {card.ability.extra.handsNeed, card.ability.extra.handsCurrent, card.ability.extra.handsLeft, localize{type = 'variable', key = (card.ability.extra.handsLeft == 0 and 'loyalty_active' or 'loyalty_inactive'),  vars = {card.ability.extra.handsLeft}}}} 
     end,
     
     calculate = function(self,card,context)
@@ -482,13 +487,16 @@ SMODS.Joker{
 
             local nukaCount = GetNukaCount()
             card.ability.extra.nuka = nukaCount
-            return{
-                Xmult_mod = nukaCount * card.ability.extra.xmult,
-                message =  "X" .. card.ability.extra.xmult * nukaCount,
-                sound = "TYN_nuka",
-                colour = G.C.MULT 
-            }
-
+            if card.ability.extra.nuka >= 1 then
+                return{
+                    Xmult_mod = nukaCount * card.ability.extra.xmult,
+                    message =  "X" .. card.ability.extra.xmult * nukaCount,
+                    sound = "TYN_nukaburp",
+                    colour = G.C.MULT 
+                }
+            else 
+                return{true}
+            end
         end
 
         if context.after and context.cardarea == G.jokers and not context.blueprint then
@@ -525,14 +533,14 @@ SMODS.Joker{
         text = {
             "{X:red,C:white} +5 {} Mult ",
             "{C:green, E:1} 1 in #1# {} chance to add Purple seal to random scored card",
-            "Gain {X:red,C:white} x0.5 {} Mult for every Purple seal added",
+            "Gain {X:red,C:white} X0.5 {} Mult for every Purple seal added",
             "{C:inactive} Currently x#3# Mult {}"
         }
     },
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 3,
+    rarity = 2,
     cost = 8,
     unlocked = true,
     discovered = true,
@@ -671,7 +679,7 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 3,
+    rarity = 2,
     cost = 8,
     unlocked = true,
     discovered = true,
@@ -746,7 +754,7 @@ SMODS.Joker{
     loc_txt = {
         name = 'Nuka Cherry',
         text = {
-            "{X:red,C:white} x2 {} Mult for every",
+            "{X:red,C:white} X2 {} Mult for every",
             "{C:red} Diamonds{} or {C:red} Hearts{} card scored",
             "{C:green, E:1} 1 in #2# {} chance to retrigger",
             "{C:red} Diamonds{} or {C:red} Hearts{} cards"
@@ -755,7 +763,7 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 2,
+    rarity = 3,
     cost = 6,
     unlocked = true,
     discovered = true,
@@ -827,7 +835,7 @@ SMODS.Joker{
     loc_txt = {
         name = 'Nuka Grape',
         text = {
-            "{X:red,C:white} x2 {} Mult for every",
+            "{X:red,C:white} X2 {} Mult for every",
             "{C:blue} Spades{} or {C:blue} Clubs{} card scored",
             "{C:green, E:1} 1 in #2# {} chance to retrigger",
             "{C:blue} Spades{} or {C:blue} Clubs{} cards"
@@ -836,7 +844,7 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 2,
+    rarity = 3,
     cost = 6,
     unlocked = true,
     discovered = true,
@@ -919,8 +927,8 @@ SMODS.Joker{
 
     atlas = 'Jokers',
     pools = { nuka = true},
-    rarity = 2,
-    cost = 5,
+    rarity = 1,
+    cost = 4,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
