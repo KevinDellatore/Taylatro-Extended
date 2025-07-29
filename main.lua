@@ -53,7 +53,7 @@ end
 
 SMODS.current_mod.optional_features = { retrigger_joker = true }
 
-
+--dictionary--
 v_dictionary = {
     pipActive = "ACTIVE!",
     pipInactive = "#3# Hands Remaining"
@@ -190,8 +190,16 @@ SMODS.Joker{
     end,
     
     calculate = function(self,card,context)
- 
         if context.joker_main then 
+            return{
+                message = '+'.. card.ability.extra.chips,
+                colour = G.C.CHIPS,
+                card = card,
+                chip_mod = card.ability.extra.chips
+            }
+        end
+
+        if context.before then 
             if pseudorandom('watermelon') < card.ability.extra.numerator/card.ability.extra.odds then
                 G.E_MANAGER:add_event(Event({
                     func = function()
@@ -239,7 +247,7 @@ SMODS.Joker{
                 colour = G.C.CHIPS,
                 delay = 0.45,
                 card = card,
-                chip_mod = card.ability.extra.chips
+                --chip_mod = card.ability.extra.chips
             }
         end
     end
@@ -445,7 +453,7 @@ SMODS.Joker{
     end
 }
 
---NUKA COLA BASE COMPLETE (?) -- TEST TEST TEST 
+--NUKA COLA BASE COMPLETE  -- TEST TEST TEST 
 SMODS.Joker{
     
     key = 'nukaJoker',
