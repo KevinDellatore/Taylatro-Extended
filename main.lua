@@ -161,7 +161,7 @@ SMODS.Joker{
         name = 'Ticking Time Bomb',
         text = {
             "Gains {C:chips}+10{} chips for every hand played",
-            "{C:green, E:1} #4# in #2# {} chance for Joker to {C:red, E:2} EXPLODE {}",
+            "{C:green, E:1} #4# in #2#{} chance for Joker to {C:red, E:2}EXPLODE{}",
             "Currently {C:chips}+#3#{C:inavtive} Chips"
         }
     },
@@ -296,9 +296,9 @@ SMODS.Joker{
     loc_txt = {
         name = 'Angel Numbers',
         text = {
-            "When a {C:attention} Three of a Kind {} is played containing {C:attention}#1#s{}",
+            "When a {C:attention}Three of a Kind{} is played containing {C:attention}#1#s{}",
             "Gives {C:attention}$#1#{}",
-            "Adds {C:attention} Lucky {} Enhancement to scored {C:attention}#1#s{}"
+            "Adds {C:attention}Lucky{} Enhancement to scored {C:attention}#1#s{}"
         }
     },
     atlas = 'Jokers',
@@ -359,9 +359,9 @@ SMODS.Joker{
         name = 'Crawl Out From the Fallout',
         text = {
             --"{C:attention} LEVELED UP {} ",
-            "Gives {C:planet} Planet Card {} of most played {C:attention} Poker Hand {}",
-            "for every {C:attention} #1# {} hands played",
-            "Hands needed for activation increases every {C:planet} Level Up {}",
+            "Gives {C:planet}Planet Card{} of most played {C:attention}Poker Handb{}",
+            "for every {C:attention} #1#{} hands played",
+            "Hands needed for activation increases every {C:planet}Level Up{}",
             "{C:inactive} #4# {}"
         }
     },
@@ -461,13 +461,13 @@ SMODS.Joker{
         name = 'Nuka Cola',
         text = {
             "{X:red,C:white} X2 {} Mult for every Nuka Cola Joker in possession", 
-            "{C:green, E:1} 1 in #1# {} chance to add {C:red} caps {} (red seals) to random scored card",
+            "{C:green, E:1} 1 in #1#{} chance to add {C:red}CAPS{} (red seals) to random scored card",
             "{C:inactive} Currently #4# Nuka Colas {} "
         }
     },
 
     atlas = 'Jokers',
-    --pools = { nuka = true},
+    pools = { nuka = true},
     rarity = 1,
     cost = 4,
     unlocked = true,
@@ -619,8 +619,8 @@ SMODS.Joker{
     loc_txt = {
         name = 'Nuka Twist',
         text = {
-            "{C:chips} +777 {} Chips",
-            "{C:green, E:1} 1 in #2# {} chance to retrigger all Jokers"
+            "{C:chips}+777{} Chips",
+            "{C:green, E:1}1 in #2#{} chance to retrigger all Jokers"
         }
     },
 
@@ -677,10 +677,10 @@ SMODS.Joker{
     loc_txt = {
         name = 'Nuka Victory',
         text = {
-            "All non face cards become {C:gold} GOLD {} cards when scored",
-            "{C:green, E:1} 1 in #1# {} chance to gain {X:red,C:white} X0.1 {} Mult", 
-            "for every scored card turned {C:gold} GOLD {} that hand",
-            "{C:inactive} Currently x#2# {}"
+            "All non face cards become {C:gold}GOLD{} cards when scored",
+            "{C:green, E:1}1 in #1#{} chance to gain {X:red,C:white} X0.1 {} Mult", 
+            "for every scored card turned {C:gold}GOLD{} that hand",
+            "{C:inactive}Currently X#2#{}"
 
         }
     },
@@ -762,10 +762,10 @@ SMODS.Joker{
     loc_txt = {
         name = 'Nuka Cherry',
         text = {
-            "{X:red,C:white} X2 {} Mult for every",
-            "{C:red} Diamonds{} or {C:red} Hearts{} card scored",
-            "{C:green, E:1} 1 in #2# {} chance to retrigger",
-            "{C:red} Diamonds{} or {C:red} Hearts{} cards"
+            "{X:red,C:white}X2{} Mult for every",
+            "{C:red}Diamonds{} or {C:red}Hearts{} card scored",
+            "{C:green, E:1}1 in #2#{} chance to retrigger",
+            "{C:red}Diamonds{} or {C:red}Hearts{} cards"
         }
     },
 
@@ -844,9 +844,9 @@ SMODS.Joker{
         name = 'Nuka Grape',
         text = {
             "{X:red,C:white} X2 {} Mult for every",
-            "{C:blue} Spades{} or {C:blue} Clubs{} card scored",
-            "{C:green, E:1} 1 in #2# {} chance to retrigger",
-            "{C:blue} Spades{} or {C:blue} Clubs{} cards"
+            "{C:blue}Spades{} or {C:blue}Clubs{} card scored",
+            "{C:green, E:1}1 in #2#{} chance to retrigger",
+            "{C:blue}Spades{} or {C:blue}Clubs{} cards"
         }
     },
 
@@ -929,7 +929,7 @@ SMODS.Joker{
         name = 'Nuka Quartz',
         text = {
             "{C:green, E:1} 1 in #1# {} chance to enhance a random",
-            "scored card into a {C:attention} Glass Card {}"
+            "scored card into a {C:attention}Glass Card{}"
         }
     },
 
