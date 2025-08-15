@@ -162,7 +162,7 @@ SMODS.Joker{
         text = {
             "Gains {C:chips}+10{} chips for every hand played",
             "{C:green, E:1} #4# in #2#{} chance for Joker to {C:red, E:2}EXPLODE{}",
-            "Currently {C:chips}+#3#{C:inavtive} Chips"
+            "{C:inactive}(Currently{} {C:chips}+#3#{} {C:inactive}Chips){}"
         }
     },
     atlas = 'Jokers',
@@ -567,7 +567,7 @@ SMODS.Joker{
             "{X:red,C:white} +5 {} Mult ",
             "{C:green, E:1} 1 in #1# {} chance to add Purple seal to random scored card",
             "Gain {X:red,C:white} X0.5 {} Mult for every Purple seal added",
-            "{C:inactive} Currently x#3# Mult {}"
+            "{C:inactive} (Currently{} {X:red,C:white}X#3#{} {C:inactive}Mult){}"
         }
     },
 
@@ -705,7 +705,7 @@ SMODS.Joker{
             "All non face cards become {C:gold}GOLD{} cards when scored",
             "{C:green, E:1}1 in #1#{} chance to gain {X:red,C:white} X0.1 {} Mult", 
             "for every scored card turned {C:gold}GOLD{} that hand",
-            "{C:inactive}Currently X#2#{}"
+            "{C:inactive}(Currently{}  {X:red,C:white}X#2#{} {C:inactive}Mult){}"
 
         }
     },
