@@ -200,7 +200,7 @@ SMODS.Joker{
         end
 
         if context.before then 
-            if pseudorandom('watermelon') < card.ability.extra.numerator/card.ability.extra.odds then
+            if 0 < card.ability.extra.numerator/card.ability.extra.odds then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         play_sound("TYN_BOOM")
@@ -225,9 +225,11 @@ SMODS.Joker{
                                 card = nil 
 
                                 local card = create_card('Joker', G.jokers, nil, nil, nil, nil, 'j_TYN_explodedJoker')
-                                SMODS.Stickers['eternal']:apply(card, true)
+                                --SMODS.Stickers['eternal']:apply(card, true)
+                                
                                 card:add_to_deck()
                                 G.jokers:emplace(card)
+                                card:set_cost()
                                 return true;
                             end
                         }))
@@ -253,6 +255,23 @@ SMODS.Joker{
     end
 }
 
+
+local setcost = Card.set_cost
+function Card:set_cost()
+    setcost(self)
+    if self.config.center.key == 'explodedJoker' then
+        self.sell_cost = -10 
+    end 
+end
+
+local setcost = Card.set_cost
+function Card:set_cost()
+    setcost(self)
+    if self.config.center.key == 'j_TYN_explodedJoker' then
+        self.sell_cost = -40 
+    end 
+end
+
 --EXPLODED JOKER :3
 SMODS.Joker{
     key = 'explodedJoker',
@@ -260,7 +279,7 @@ SMODS.Joker{
         name = 'Aftermath',
         text = {
             "Chunks of Watermelon now litter the room",
-            "Cannot be sold or destroyed",
+            "Pay someone to clean this shit up",
             "PepePoint"
         }
     },
@@ -287,7 +306,10 @@ SMODS.Joker{
     in_pool = function(self,wawa,wawa2)
         --whether or not this card is in the pool, return true if it is, return false if its not
         return false
-    end
+    end,
+    
+
+
 }
 
 -- Yoshi Joker, gives $7 when Three of a Kind 7s are played -- 
@@ -358,10 +380,9 @@ SMODS.Joker{
     loc_txt = {
         name = 'Crawl Out From the Fallout',
         text = {
-            --"{C:attention} LEVELED UP {} ",
-            "Gives {C:planet}Planet Card{} of most played {C:attention}Poker Handb{}",
+            "{C:planet}LEVELED UP!{}",
+            "Gives {C:planet}Planet Card{} of most played {C:attention}Poker Hand{}",
             "for every {C:attention} #1#{} hands played",
-            "Hands needed for activation increases every {C:planet}Level Up{}",
             "{C:inactive} #4# {}"
         }
     },
@@ -377,9 +398,9 @@ SMODS.Joker{
     pos = {x = 5, y = 0},
     config = { 
         extra = {
-            handsNeed = 2,
+            handsNeed = 3,
             handsCurrent = 0,
-            handsLeft = 1,
+            handsLeft = 2,
             active = false
         }
     },
@@ -426,7 +447,11 @@ SMODS.Joker{
                 }))
                 
                 card.ability.extra.handsCurrent = 0
-                card.ability.extra.handsNeed = card.ability.extra.handsNeed + 1
+
+                if (card.ability.extra.handsNeed < 3) then
+                    card.ability.extra.handsNeed = card.ability.extra.handsNeed + 1
+                end
+                
                 card.ability.extra.handsLeft = card.ability.extra.handsNeed - 1
                 card.ability.extra.active = false
 
@@ -977,62 +1002,6 @@ SMODS.Joker{
         end
     end
 }
-
---coin joker
-
---[[SMODS.Joker{
-    key = 'coinJoker',
-    loc_txt = {
-        name = 'Flippa Flippa',
-        text = {
-            "{C:green, E:1}50%{} chance to",
-            "Either give {X:red,C:white} X1000 {} Mult",
-            "or instantly end the run"
-        }
-    },
-    atlas = 'Jokers',
-    rarity = 3,
-    cost = 8,
-    unlocked = true,
-    discovered = true,
-    blueprint_compat = true,
-    perishable_compat = true,
-    eternal_compat = true,
-    pos = {x = 1, y = 0},
-    config = { 
-        extra = {
-            X_mult = 1000,
-            odds = 2
-        }
-    },
-    
-    loc_vars = function(self, info_queue, card)
-        return{vars = {G.GAME.probabilities.normal, card.ability.extra.odds}
-        } 
-    end,
-    
-    calculate = function(self,card,context)
-        local chance = pseudorandom('pipeJoker')
-        
-        if context.joker_main then 
-            
-            if chance < G.GAME.probabilities.normal/card.ability.extra.odds then
-                return{
-                    Xmult_mod = card.ability.extra.X_mult,
-                    message = 'X' .. card.ability.extra.X_mult,
-                    sound = 'TYN_metalPipe',
-                    colour = G.C.MULT,
-                }
-            end
-
-            if chance > G.GAME.probabilities.normal/card.ability.extra.odds then
-                G.STATE = G.STATES.GAME_OVER; G.STATE_COMPLETE = false
-            end
-        end
-    end
-}
-]]
-
 
 
 --nuka check--
