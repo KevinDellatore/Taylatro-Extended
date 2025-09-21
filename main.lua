@@ -35,6 +35,7 @@ SMODS.Sound{key='levelUp', path = 'VegasLevelUp.ogg'}
 SMODS.Sound{key='nuka', path = 'nuka.ogg'}
 SMODS.Sound{key='burp', path = 'burp.ogg'}
 SMODS.Sound{key='nukaburp', path = 'nukaburp.ogg'}
+SMODS.Sound{key='case', path = 'case.ogg'}
 
 --JOKERS ATLAS--
 SMODS.Atlas{
@@ -71,6 +72,7 @@ SMODS.Joker{
             "{X:red,C:white} X10 {} Mult"
         }
     },
+   
     atlas = 'Jokers',
     rarity = 3,
     cost = 8,
@@ -117,6 +119,7 @@ SMODS.Joker{
             "{C:chips}+200{C:inavtive} Chips"
         }
     },
+    
     atlas = 'Jokers',
     rarity = 2,
     cost = 5,
@@ -165,6 +168,7 @@ SMODS.Joker{
             "{C:inactive}(Currently{} {C:chips}+#3#{} {C:inactive}Chips){}"
         }
     },
+    
     atlas = 'Jokers',
     rarity = 2,
     cost = 4,
@@ -200,7 +204,7 @@ SMODS.Joker{
         end
 
         if context.before then 
-            if 0 < card.ability.extra.numerator/card.ability.extra.odds then
+            if pseudorandom('watermelon') < card.ability.extra.numerator/card.ability.extra.odds then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         play_sound("TYN_BOOM")
@@ -283,6 +287,7 @@ SMODS.Joker{
             "PepePoint"
         }
     },
+    
     atlas = 'Jokers',
     rarity = 3,
     cost = 100,
@@ -323,6 +328,7 @@ SMODS.Joker{
             "Adds {C:attention}Lucky{} Enhancement to scored {C:attention}#1#s{}"
         }
     },
+    
     atlas = 'Jokers',
     rarity = 1,
     cost = 4,
@@ -386,7 +392,7 @@ SMODS.Joker{
             "{C:inactive} #4# {}"
         }
     },
-
+    
     atlas = 'Jokers',
     rarity = 2,
     cost = 5,
@@ -1003,6 +1009,187 @@ SMODS.Joker{
     end
 }
 
+-- Case Joker
+SMODS.Joker{
+    
+    key = 'caseJoker',
+    loc_txt = {
+        name = 'Gambling Addiction',
+        text = {
+            "When holding both {C:attention}Gambling Addiction{}",
+            "and {C:attention}Dingles Keys{} gain a random Joker",
+            "{C:attention}Gambling Addiction{} and {C:attention}Dingles Keys{} are destroyed",
+            "{C:chips}+50{} Chips when held alone"
+
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { case = true},
+    rarity = 1,
+    cost = 2,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 6, y = 0},
+    config = { 
+        extra = {
+            chips = 50,
+            denOdds = 100,
+            comOdds = 50,
+            uncomOdds = 35,
+            rareOdds = 10, 
+            legOdds = 5,
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = card.ability.extra.chips, G.GAME.probabilities.normal, card.ability.extra.comOdds, card.ability.extra.uncomOdds, card.ability.extra.rareOdds, card.ability.extra.legOdds, card.ability.extra.denOdds} 
+    end,
+    
+    calculate = function(self,card,context)
+        if context.buying_card and context.cardarea == G.jokers then
+            
+            local hasCase = confirmCase()
+            local hasKey = confirmKey()
+
+            local rarity = 0
+            local pull = pseudorandom('roll')
+            print("random:", pull)
+
+            if pull < (card.ability.extra.legOdds / card.ability.extra.denOdds) then
+                rarity = 4
+            elseif pull < ((card.ability.extra.legOdds / card.ability.extra.denOdds)+(card.ability.extra.rareOdds / card.ability.extra.denOdds)) then
+                rarity = 1
+            elseif pull < (((card.ability.extra.legOdds / card.ability.extra.denOdds)+(card.ability.extra.rareOdds / card.ability.extra.denOdds))+(card.ability.extra.uncomOdds / card.ability.extra.denOdds)) then
+                rarity = 0.8
+            else
+                rarity = 0.7
+            end
+            
+            print(rarity)
+
+            if hasCase == 1 and hasKey == 1 then
+
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.3,
+                    blockable = false,
+                    func = function()
+                        card:start_dissolve({G.C.RED}, nil, 1.6)
+                        G.jokers:remove_card(card)
+                        card:remove()
+                        card = nil 
+                        play_sound('TYN_case')
+
+                        local openedJoker = nil
+                        
+                        if rarity == 4 then
+                            openedJoker = create_card('Joker', G.jokers, true, nil, nil, nil, nil, nil) 
+                        else 
+                            openedJoker = create_card('Joker', G.jokers, nil, rarity, nil, nil, nil, nil)
+                        end
+                                            
+                        openedJoker:add_to_deck()
+                        openedJoker:start_materialize()      
+                        G.jokers:emplace(openedJoker)
+                
+                        return true;
+                    end
+                }))
+
+                --G.jokers:remove_card('TYN_caseJoker')
+                
+                --local openedJoker = create_card('Joker', G.jokers, nil, nil, nil, nil, 'j_TYN_explodedJoker')
+                --G.jokers:emplace(openedJoker)
+                return{
+                    message = "Case Opened",
+                    --sound = "TYN_case",
+                    color = G.C.MULT
+                }
+            end
+        end
+        
+        if context.joker_main then 
+            return{
+                message = '+'.. card.ability.extra.chips,
+                colour = G.C.CHIPS,
+                card = card,
+                chip_mod = card.ability.extra.chips
+            }
+        end
+    end
+}
+
+-- Key Joker
+SMODS.Joker{
+    
+    key = 'keyJoker',
+    loc_txt = {
+        name = 'Dingles Keys',
+        text = {
+            "When holding both {C:attention}Gambling Addiction{}",
+            "and {C:attention}Dingles Keys{} gain a random Joker",
+            "{C:attention}Gambling Addiction{} and {C:attention}Dingles Keys{} are destroyed",
+            "{C:chips}+50{} Chips when held alone"
+
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { key = true},
+    rarity = 1,
+    cost = 2,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 7, y = 0},
+    config = { 
+        extra = {
+            chips = 50     
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = card.ability.extra.chips, G.GAME.probabilities.normal}  
+    end,
+    
+    calculate = function(self,card,context)
+        if context.buying_card and context.cardarea == G.jokers then
+            local hasCase = confirmCase()
+            local hasKey = confirmKey()
+
+            if hasCase == 1 and hasKey == 1 then
+
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.3,
+                    blockable = false,
+                    func = function()
+                        card:start_dissolve({G.C.RED}, nil, 1.6)
+                        G.jokers:remove_card(card)
+                        card:remove()
+                        card = nil 
+                        return true;
+                    end
+                }))
+            end
+        end
+
+        if context.joker_main then 
+            return{
+                message = '+'.. card.ability.extra.chips,
+                colour = G.C.CHIPS,
+                card = card,
+                chip_mod = card.ability.extra.chips
+            }
+        end
+    end
+}
 
 --nuka check--
 function GetNukaCount()
@@ -1017,6 +1204,35 @@ function GetNukaCount()
         end
     end
     return nuka_count
+end
+
+-- Key and Cases --
+function confirmKey()
+    local key = 0
+    if G.jokers and G.jokers.cards then
+        for i = 1, #G.jokers.cards do
+            local card = G.jokers.cards[i]
+            local center = (type(card) == "string" and G.P.CENTERS[card]) or (card.config and card.config.center)
+            if center and center.pools and center.pools.key then
+                key = key + 1 
+            end
+        end
+    end
+    return key
+end
+
+function confirmCase()
+    local case = 0
+    if G.jokers and G.jokers.cards then
+        for i = 1, #G.jokers.cards do
+            local card = G.jokers.cards[i]
+            local center = (type(card) == "string" and G.P.CENTERS[card]) or (card.config and card.config.center)
+            if center and center.pools and center.pools.case then
+                case = case + 1 
+            end
+        end
+    end
+    return case
 end
 
 -----------------------------------------------------------
