@@ -1057,7 +1057,7 @@ SMODS.Joker{
 
             local rarity = 0
             local pull = pseudorandom('roll')
-            print("random:", pull)
+            
 
             if pull < (card.ability.extra.legOdds / card.ability.extra.denOdds) then
                 rarity = 4
@@ -1069,7 +1069,7 @@ SMODS.Joker{
                 rarity = 0.7
             end
             
-            print(rarity)
+            
 
             if hasCase == 1 and hasKey == 1 then
 
