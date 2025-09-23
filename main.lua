@@ -1027,7 +1027,7 @@ SMODS.Joker{
     atlas = 'Jokers',
     pools = { case = true},
     rarity = 1,
-    cost = 2,
+    cost = 5,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -1049,12 +1049,23 @@ SMODS.Joker{
         return{vars = card.ability.extra.chips, G.GAME.probabilities.normal, card.ability.extra.comOdds, card.ability.extra.uncomOdds, card.ability.extra.rareOdds, card.ability.extra.legOdds, card.ability.extra.denOdds} 
     end,
     
+    --set_ability = function(self, card, initial, delay_sprites) card:set_edition('e_TYN_caseEdition', false, true) end,
+    
+    set_ability = function(self, card, initial, delay_sprites)
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                card:set_edition({ TYN_caseEdition = true }, true)
+                return true
+            end
+        }))
+    end,
+
     calculate = function(self,card,context)
         if context.buying_card and context.cardarea == G.jokers then
             
             local hasCase = confirmCase()
             local hasKey = confirmKey()
-
+            card:set_edition('e_TYN_caseEdition', false, true)
             local rarity = 0
             local pull = pseudorandom('roll')
             
@@ -1141,7 +1152,7 @@ SMODS.Joker{
     atlas = 'Jokers',
     pools = { key = true},
     rarity = 1,
-    cost = 2,
+    cost = 5,
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
@@ -1158,11 +1169,22 @@ SMODS.Joker{
         return{vars = card.ability.extra.chips, G.GAME.probabilities.normal}  
     end,
     
+    --set_ability = function(self, card, initial, delay_sprites) card:set_edition('e_TYN_caseEdition', false, true) end,
+
+    set_ability = function(self, card, initial, delay_sprites)
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                card:set_edition({ TYN_caseEdition = true }, true)
+                return true
+            end
+        }))
+    end,
+    
     calculate = function(self,card,context)
         if context.buying_card and context.cardarea == G.jokers then
             local hasCase = confirmCase()
             local hasKey = confirmKey()
-
+            card:set_edition('e_TYN_caseEdition', false, true)
             if hasCase == 1 and hasKey == 1 then
 
                 G.E_MANAGER:add_event(Event({
@@ -1234,6 +1256,30 @@ function confirmCase()
     end
     return case
 end
+
+
+--editions--
+SMODS.Edition({
+    key = 'caseEdition',
+    loc_txt = {
+        name = 'Case & Key',
+        label = 'Case & Key',
+        text = {'+1 Joker Slot'}
+    },
+
+    shader = false,
+    config = {card_limit = 1},
+    discovered = true,
+    unlocked = true,
+    in_shop = false,
+    in_pool = false,
+    weight = 0,
+    extra_cost = 1,
+    apply_to_float = true,
+    loc_vars = function(self)
+        return {vars = {self.config.card_limit}}
+    end
+})
 
 -----------------------------------------------------------
 -----------------------MOD CODE END------------------------
