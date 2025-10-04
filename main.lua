@@ -493,7 +493,7 @@ SMODS.Joker{
         text = {
             "{X:red,C:white} X2 {} Mult for every Nuka Cola Joker in possession", 
             "{C:green, E:1} 1 in #1#{} chance to add {C:red}CAPS{} (red seals) to random scored card",
-            "{C:inactive} Currently #4# Nuka Colas {} "
+            "{C:inactive}(Currently #4# Nuka Colas){}"
         }
     },
 
@@ -573,7 +573,7 @@ SMODS.Joker{
             "{X:red,C:white} +5 {} Mult ",
             "{C:green, E:1} 1 in #1# {} chance to add Purple seal to random scored card",
             "Gain {X:red,C:white} X0.5 {} Mult for every Purple seal added",
-            "{C:inactive} (Currently{} {X:red,C:white}X#3#{} {C:inactive}Mult){}"
+            "{C:inactive}(Currently{} {X:red,C:white}X#3#{} {C:inactive}Mult){}"
         }
     },
 
@@ -743,15 +743,17 @@ SMODS.Joker{
         if context.before and not context.blueprint then
             local goldCount = 0
             for k, v in ipairs(context.scoring_hand) do
-                if not v:is_face() then 
-                    v:set_ability(G.P_CENTERS.m_gold, nil, true)
-                    G.E_MANAGER:add_event(Event({
-                        func = function()
-                            v:juice_up()
-                            return true
-                        end
-                    })) 
-                    goldCount = goldCount + 0.1
+                if not v:is_face() then
+                    if not (SMODS.has_enhancement(v, m_gold )) then
+                        v:set_ability(G.P_CENTERS.m_gold, nil, true)
+                        G.E_MANAGER:add_event(Event({
+                            func = function()
+                                v:juice_up()
+                                return true
+                            end
+                        })) 
+                        goldCount = goldCount + 0.1
+                    end
                 end
             end
             
@@ -1096,7 +1098,7 @@ SMODS.Joker{
                         play_sound('TYN_case')
 
                         local openedJoker = nil
-                        
+                        delay = 3
                         if rarity == 4 then
                             openedJoker = create_card('Joker', G.jokers, true, nil, nil, nil, nil, nil) 
                         else 
@@ -1213,6 +1215,86 @@ SMODS.Joker{
     end
 }
 
+-- BLood God
+SMODS.Joker{
+    
+    key = 'bloodJoker',
+    loc_txt = {
+        name = 'Blood Gods Offering',
+        text = {
+            "This Joker Gains {X:red,C:white}X0.1{}",
+            "for every {C:red}Hearts{} card discarded",
+            "Loses {X:red,C:white}X0.1{}",
+            "For Every {C:red}Hearts{} card scored",
+            "{C:inactive}(Currently{} {X:red,C:white}X#1#{} {C:inactive}Mult){}"
+        }
+    },
+
+    atlas = 'Jokers',
+    pools = { key = true},
+    rarity = 1,
+    cost = 5,
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    perishable_compat = true,
+    eternal_compat = true,
+    pos = {x = 7, y = 1},
+    config = { 
+        extra = {
+            x_mult = 1,
+            mod = 0.1    
+        }
+    },
+    
+    loc_vars = function(self, info_queue, card)
+        return{vars = {card.ability.extra.x_mult, G.GAME.probabilities.normal, card.ability.extra.mod}
+        }    
+    end,
+
+    
+    calculate = function(self,card,context)
+        local heartCount = 0
+        if context.discard and not context.other_card.debuff then
+            if context.other_card:is_suit('Hearts') and not context.blueprint then
+                card.ability.extra.x_mult = card.ability.extra.x_mult + card.ability.extra.mod
+                heartCount = heartCount + card.ability.extra.mod
+            else
+                return nil
+            end
+
+            if heartCount > 0 then
+                return{
+                    message = '+' .. heartCount,
+                    colour = G.C.MULT
+                }
+            end
+        end
+
+        if context.individual then 
+            if context.cardarea == G.play then
+                if context.other_card:is_suit("Hearts") then
+                    if card.ability.extra.x_mult > 1 then
+                        card.ability.extra.x_mult = card.ability.extra.x_mult - card.ability.extra.mod
+                        return{
+                            message = '-' .. card.ability.extra.mod,
+                            colour = G.C.MULT 
+                        }
+                    end
+                end
+            end
+        end
+
+        if context.joker_main then 
+            return{
+                Xmult_mod = card.ability.extra.x_mult,
+                message = 'X' .. card.ability.extra.x_mult,
+                colour = G.C.MULT,
+            }
+        end
+    end
+}
+
 --nuka check--
 function GetNukaCount()
     local nuka_count = 0
@@ -1256,7 +1338,6 @@ function confirmCase()
     end
     return case
 end
-
 
 --editions--
 SMODS.Edition({
