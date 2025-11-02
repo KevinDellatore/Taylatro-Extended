@@ -1040,10 +1040,10 @@ SMODS.Joker{
         extra = {
             chips = 50,
             denOdds = 100,
-            comOdds = 50,
+            comOdds = 40,
             uncomOdds = 35,
-            rareOdds = 10, 
-            legOdds = 5,
+            rareOdds = 15, 
+            legOdds = 10,
         }
     },
     
